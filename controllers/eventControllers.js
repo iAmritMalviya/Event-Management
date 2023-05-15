@@ -12,10 +12,7 @@ eventController.get = async (req, res) => {
 
   if (Id && !ObjectId.isValid(Id)) {
     return res.status(400).json({ message: "Invalid Id parameter passed" });
-  }
-  
-  // Rest of your code...
-  
+  }  
   const keys = {
     type: 'event',
   }
@@ -24,10 +21,6 @@ eventController.get = async (req, res) => {
   }
 
   const collection = await db.collection(collectionName);
-
-
-
-
   const [totalCount, responses] = await Promise.all([
     collection.countDocuments(),
     collection
@@ -192,8 +185,5 @@ eventController.delete = async (req, res) => {
     return res.status(500).json({ message: 'An error occurred while deleting the event' });
   }
 };
-
-
-
 
 module.exports = eventController
