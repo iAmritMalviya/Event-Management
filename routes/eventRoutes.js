@@ -19,9 +19,9 @@ const auth = function (req, res, next) {
     next()
 }
 
-Router.get('/', auth, controller.event.get)
-Router.post('/', upload.single('image'), controller.event.create)
-Router.put('/:Id',  upload.single('image'), controller.event.edit)
-Router.delete('/:Id', controller.event.delete)
+Router.get('/events', auth, controller.event.get)
+Router.post('/events', upload.single('image'), controller.event.create)
+Router.put('/events:Id',  upload.single('image'), controller.event.edit)
+Router.delete('/events:Id', controller.event.delete)
 
 module.exports = Router

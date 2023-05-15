@@ -2,21 +2,36 @@ const eventController = {}
 const db = require('../modules/mongodb');
 const { ObjectId } = require('mongodb');
 const collectionName = 'events'
-
+// GET: getting all the events, query page, limit and sort are accepted 
 eventController.get = async (req, res) => {
-
-  console.log(req.uid)
 
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
   const sort = req.query.sort === 'older' ? { createdAt: 1 } : { createdAt: -1 };
+  const Id = req.query.Id || undefined;
 
-  const collection = await db.collection('events');
+  if (Id && !ObjectId.isValid(Id)) {
+    return res.status(400).json({ message: "Invalid Id parameter passed" });
+  }
+  
+  // Rest of your code...
+  
+  const keys = {
+    type: 'event',
+  }
+  if (Id) {
+    keys._id = new ObjectId(Id)  
+  }
 
-  const [totalCount, eventData] = await Promise.all([
+  const collection = await db.collection(collectionName);
+
+
+
+
+  const [totalCount, responses] = await Promise.all([
     collection.countDocuments(),
     collection
-      .find({})
+      .find(keys)
       .sort(sort)
       .skip(page > 0 ? (page - 1) * limit : 0)
       .limit(limit)
@@ -24,53 +39,64 @@ eventController.get = async (req, res) => {
   ]);
 
   const totalPages = Math.ceil(totalCount / limit);
-
   return res.json({
-    eventData,
+    responses,
     totalCount,
     totalPages
   })
 }
-
+//  POST: for creating the event. using checkrequired if we don't find it give the error
 eventController.create = async (req, res) => {
-  const { name, tagline, schedule, description, moderator, category, sub_category, rigor_rank, attendees } = req.body
-  const uid = parseInt(req.uid) || 336
-  checkRequired(req, res)
+  const { name, tagline, schedule, description, moderator, category, sub_category, rigor_rank, attendees } = req.body;
+  const uid = parseInt(req.uid);
+  console.log(req.body)
+
+  const fieldsLength = checkRequiredFields(req, res);
 
   const imageDocument = {
     name: Date.now() + '--' + req.file.originalname,
     contentType: req.file.mimetype
   };
+  if (!(fieldsLength > 0)) {
+    const payload = {
+      name: name.trim(),
+      tagline: tagline.trim(),
+      description: description.trim(),
+      category: category.trim(),
+      sub_category: sub_category.trim(),
+      rigor_rank: parseInt(rigor_rank),
+      attendees: attendees.trim(),
+      schedule: new Date(schedule).toISOString(),
+      moderator: parseInt(moderator),
+      image: imageDocument,
+      createdAt: new Date().toISOString(),
+      uid,
+      type: 'event'
+    };
 
-  const payload = {
-    name,
-    tagline,
-    description,
-    category,
-    sub_category,
-    rigor_rank: parseInt(rigor_rank),
-    attendees,
-    schedule: new Date(schedule).toISOString(),
-    moderator: parseInt(moderator),
-    image: imageDocument,
-    createdAt: new Date().toISOString(),
-    uid,
-    type: 'event'
+    const collection = await db.collection(collectionName);
+    const result = await collection.insertOne(payload);
+    if (result.acknowledged)
+      res.json({ message: 'Event created successfully', result });
+    else {
+      console.error(error);
+      res.status(500).json({ message: 'An error occurred while creating the event' });
+    }
   }
-  console.log(payload);
-  const collection = await db.collection(collectionName)
-  return res.json(await collection.insertOne(payload))
 
-}
+};
 
-function checkRequired(req, res) {
+function checkRequiredFields(req, res) {
   const requiredFields = ['name', 'tagline', 'schedule', 'description', 'moderator', 'category', 'sub_category', 'rigor_rank', 'attendees']
+
   const missingFields = requiredFields.filter(field => !(field in req.body));
 
   if (missingFields.length > 0) {
     const errorMessage = `Missing required fields: ${missingFields.join(', ')}`;
-    return res.json(errorMessage)
+    res.status(400).json(errorMessage)
+
   }
+  return missingFields.length
 
 }
 

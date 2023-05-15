@@ -1,3 +1,2 @@
-const routes = {}
+const routes = module.exports
 routes.event = require('./eventRoutes');
-module.exports = routes
