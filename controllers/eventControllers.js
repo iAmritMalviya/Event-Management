@@ -4,7 +4,6 @@ const { ObjectId } = require('mongodb');
 const collectionName = 'events'
 // GET: getting all the events, query page, limit and sort are accepted 
 eventController.get = async (req, res) => {
-
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
   const sort = req.query.sort === 'older' ? { createdAt: 1 } : { createdAt: -1 };
@@ -78,7 +77,7 @@ eventController.create = async (req, res) => {
   }
 
 };
-
+//  verifying if required fields are available or not
 function checkRequiredFields(req, res) {
   const requiredFields = ['name', 'tagline', 'schedule', 'description', 'moderator', 'category', 'sub_category', 'rigor_rank', 'attendees']
 
@@ -87,7 +86,7 @@ function checkRequiredFields(req, res) {
   if (missingFields.length > 0) {
     const errorMessage = `Missing required fields: ${missingFields.join(', ')}`;
     res.status(400).json(errorMessage)
-
+    // status code: 400 for bad request
   }
   return missingFields.length
 
@@ -98,7 +97,7 @@ eventController.edit = async (req, res) => {
   const id = req.params.Id;
   let { name, tagline, schedule, description, moderator, category, sub_category, rigor_rank, attendees } = req.body;
   const uid = req.uid || 336;
-
+  //  if object id, verifying the id, 
   if (!ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid Id passed' });
   }
@@ -106,7 +105,7 @@ eventController.edit = async (req, res) => {
   const payload = {};
   const keys = {
     type: 'event',
-    _id: new ObjectId(id),
+    _id: new ObjectId(id), // using mongodb client
     uid: uid
   };
 
@@ -138,7 +137,7 @@ eventController.edit = async (req, res) => {
   if (attendees && attendees.trim() !== '') {
     payload.attendees = attendees.trim();
   }
-
+  // if any change, length will be increased, and it will have a db call
   if (Object.keys(payload).length) {
     payload.updatedAt = new Date().toISOString();
     payload.updatedBy = uid;
@@ -171,7 +170,7 @@ eventController.delete = async (req, res) => {
       uid: uid,
       type: 'event',
     };
-
+    
     const collection = await db.collection(collectionName);
     const result = await collection.deleteOne(keys);
 
