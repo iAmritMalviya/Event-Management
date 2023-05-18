@@ -4,9 +4,10 @@ const fs = require('fs')
 const { ObjectId } = require('mongodb');
 const collectionName = 'events'
 // GET: getting all the events, query page, limit and sort are accepted 
+
 eventController.get = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
+  const limit = parseInt(req.query.limit) || 100;
   const sort = req.query.sort === 'older' ? { createdAt: 1 } : { createdAt: -1 };
   const Id = req.query.Id || undefined;
 
@@ -19,7 +20,6 @@ eventController.get = async (req, res) => {
   if (Id) {
     keys._id = new ObjectId(Id)
   }
-
   const collection = await db.collection(collectionName);
   const [totalCount, responses] = await Promise.all([
     collection.countDocuments(),
@@ -30,7 +30,6 @@ eventController.get = async (req, res) => {
       .limit(limit)
       .toArray(),
   ]);
-
   const totalPages = Math.ceil(totalCount / limit);
   return res.json({
     responses,
@@ -40,6 +39,7 @@ eventController.get = async (req, res) => {
 }
 //  POST: for creating the event. using checkrequired if we don't find it give the error
 eventController.create = async (req, res) => {
+  console.log(req.body, 'body')
   const { name, tagline, schedule, description, moderator, category, sub_category, rigor_rank, attendees } = req.body;
   const uid = parseInt(req.uid);
  
@@ -57,17 +57,21 @@ eventController.create = async (req, res) => {
       uid,
       type: 'event'
     };
-
+    console.log(req.file)
+    if(req.file){
     const imageDocument = {
       name: Date.now() + '--' + req.file.originalname,
       contentType: req.file.mimetype,
-      file: fs.readFileSync(req.file.path)
+      // file: fs.readFileSync(req.file.path)
     };
     payload.image = imageDocument
-
+  }
     console.log("payload", payload)
     const collection = await db.collection(collectionName);
     const result = await collection.insertOne(payload);
+
+    console.log("testing", result)
+
     if (result.acknowledged)
       res.json({ message: 'Event created successfully', result });
     // db.close()
@@ -106,13 +110,15 @@ eventController.edit = async (req, res) => {
     payload.updatedBy = uid;
     console.log(payload)
     try {
+      if(req.file)
+      {
       const imageDocument = {
         name: Date.now() + '--' + req.file.originalname,
         contentType: req.file.mimetype,
-        file: fs.readFileSync(req.file.path)
+        // file: fs.readFileSync(req.file.path)
       };
       payload.image = imageDocument
-
+    }
       const collection = await db.collection(collectionName);
       const result = await collection.updateOne(keys, { $set: payload });
       res.status(200).json({ message: 'Event updated successfully', result: result });

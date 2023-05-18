@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang='en'>
+
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Awesome Title</title>
+    <!-- <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css' rel='stylesheet'
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous"> -->
+    <style>
+        .container {
+            width: 70%;
+            margin: auto;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        .btn {
+            border: 1px solid rgb(59, 59, 59);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            /* Full height */
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            height: 50%;
+            overflow-y: auto ;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        input, select {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="header">
+            <h2 class="text-align-center">Event Management</h2>
+            <button type="button" id="create">Create</button>           
+        </div>
+        <table id="table-data"></table>
+
+    </div>
+
+    <div id="modal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" id="close">&times;</span>
+            <h3>Create your event</h3>
+            <form id="form"  enctype="multipart/form-data">
+                <label for="name">Name of the event</label><br>
+                <input type="text" name="name" id="name" value="this is data"><br>
+
+                <label for="tagline">Tagline of the event</label><br>
+                <input type="text" name="tagline" id="tagline" value="this is data"><br>
+
+                <label for="description">Description for the event</label><br>
+                <textarea type="text" name="description" id="description" rows="3" value="this is data"></textarea><br>
+
+                <label for="category">Category</label><br>
+                <select name="category" id="category">
+                    <option value="music">Music</option>
+                    <option value="technology">Technology</option>
+                    <option value="writing">Writing</option>
+                    <option value="art">Art</option>
+                </select>
+                <br>
+                <label for="sub_category">Sub_category</label><br>
+                <select name="sub_category" id="sub_category">
+                    <option value="students">Students</option>
+                    <option value="working_professionals">Working Professionals</option>
+                </select>
+                <br>
+
+                <label for="rigor_rank">Rigor Rank</label><br>
+                <input type="number" name="rigor_rank" id="rigor_rank" value="1"><br>
+                <label for="schedule">Schedule</label><br>
+                <input type="datetime-local" id="schedule" name="schedule"><br>
+
+                <label for="attendees">Attendees</label><br>
+                <input type="text" name="attendees" id="attendees" value="45"><br>
+
+                <label for="moderator">Moderator</label><br>
+                <input type="text" name="moderator" id="moderator" value="487"><br>      
+
+                <label for="fileselect">Upload:</label><br>
+                <input type="file" name="image" id="image" accept="image/png, image/jpeg"><br>
+
+                <button type="submit" id="submitBtn">Create Event</button>
+            </form>
+        </div>    
+
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+       
+    <script src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+        integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js" integrity="sha512-Gn0tSSjkIGAkaZQWjx3Ctl/0dVJuTmjW/f9QyB302kFjU4uTNP4HtA32U2qXs/TRlEsK5CoEqMEMs7LnzLOBsA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+       
+    <script src="../public/js/main.js"></script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 
 const essentialmiddlwares = module.exports
 
-essentialmiddlwares.checkRequired = function (req, res, next) {
+essentialmiddlwares.checkRequired = function ( req, res, next) {
     const requiredFields = ['name', 'tagline', 'schedule', 'description', 'moderator', 'category', 'sub_category', 'rigor_rank', 'attendees']
     const missingFields = [];
     console.log("missing", missingFields, req.body)

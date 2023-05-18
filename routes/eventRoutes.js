@@ -3,23 +3,24 @@ const Router = express.Router();
 const controller = require('../controllers/index');
 const multer = require('multer'); // node module for uploading & retrieving the files
 const {auth, essentialMiddlewares} = require('../middlewares/index') // middleware for authetication
-var storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/');
     },
-    filename: (req, file, cb) => {
-        cb(null, Date.now()+ '--' + file.originalname)  // to make it unique
+    filename: function (req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname);
     }
-}); // defining storage in multer
-
-var upload = multer({ storage: storage });
+  });
+  
+  // Create the Multer middleware
+  const upload = multer({ storage: storage });
 
 
 // GET: API for getting all the events
 Router.get('/events', auth.isLoggedIn, controller.event.get)
 // upload.single('image), upload is multer function, single is for uploading single photo, image is the name of the file, coming from the client side
 // POST: API for creating an event
-Router.post('/events', [auth.isLoggedIn,upload.single('image'), essentialMiddlewares.checkRequired,], controller.event.create)
+Router.post('/events', [auth.isLoggedIn,upload.single('image')], controller.event.create)
 // PUT: API for editing an event
 Router.put('/events/:Id',  [auth.isLoggedIn,upload.single('image')], controller.event.edit)
 // DELETE: API for deleting an event
